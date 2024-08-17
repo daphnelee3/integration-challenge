@@ -1,31 +1,53 @@
 import { useBankContext } from '@/context/BankContext';
+import { BankName } from '@/data/types';
 import styles from '@/styles/Header.module.css';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+interface DropdownItemProps {
+  bankName: BankName;
+  onSelect: (bank: BankName) => void;
+}
+
+const DropdownItem = ({ bankName, onSelect }: DropdownItemProps) => (
+  <div className={styles.dropdownItem} onClick={() => onSelect(bankName)}>
+    <div className={styles.dropdownText}>{bankName}</div>
+  </div>
+);
 
 const DropdownComponent = () => {
   const { bank, setBank } = useBankContext();
   const [isMenuActive, setMenuActive] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => {
     setMenuActive((currStatus) => !currStatus);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setMenuActive(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const bankOptions = [BankName.USCCU, BankName.SCU, BankName.FFFCU];
+
   return (
-    <div className={styles.dropdownContainer}>
+    <div className={styles.dropdownContainer} ref={menuRef}>
       <div className={styles.dropdownSelect} onClick={toggleMenu}>
         <p className={styles.dropdownContainerText}>{bank}</p>
       </div>
       {isMenuActive && (
         <div className={styles.dropdownMenu}>
-          <div className={styles.dropdownItem} onClick={() => setBank('USCCU')}>
-            <div className={styles.dropdownText}>USCCU</div>
-          </div>
-          <div className={styles.dropdownItem} onClick={() => setBank('SCU')}>
-            <div className={styles.dropdownText}>SCU</div>
-          </div>
-          <div className={styles.dropdownItem} onClick={() => setBank('FFFCU')}>
-            <div className={styles.dropdownText}>FFFCU</div>
-          </div>
+          {bankOptions.map((bank) => (
+            <DropdownItem key={bank} bankName={bank} onSelect={setBank} />
+          ))}
         </div>
       )}
     </div>
