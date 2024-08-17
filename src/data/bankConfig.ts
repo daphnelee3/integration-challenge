@@ -1,44 +1,52 @@
-interface BankAction {
-  id: string;
+import { BankName } from './types';
+
+type Action = {
+  isChecked: boolean;
   route?: string;
-}
+};
 
-interface BankConfig {
-  actions: BankAction[];
-  fundLimits: {
-    min: number;
-    max: number;
-  };
-}
+type BankActions = {
+  [key: string]: Action; // key is the action id
+};
 
-export const bankConfig: Record<string, BankConfig> = {
+type FundLimits = {
+  min: number;
+  max: number;
+};
+
+export type BankConfig = {
+  actions: BankActions;
+  fundLimits: FundLimits;
+};
+
+export const bankConfig: Record<BankName, BankConfig> = {
   USCCU: {
-    actions: [
-      { id: 'fund', route: '/fund-account' },
-      { id: 'requestDebit', route: '/request-debit-card' },
-      { id: 'accessDigitalBanking' },
-      { id: 'addNewChecking' },
-      { id: 'connectDirectDeposit' },
-    ],
+    actions: {
+      fund: { isChecked: false, route: '/fund-account' },
+      requestDebit: { isChecked: false, route: '/request-debit-card' },
+      accessDigitalBanking: { isChecked: false },
+      addNewChecking: { isChecked: false },
+      connectDirectDeposit: { isChecked: false },
+    },
     fundLimits: { min: 10, max: 100000 },
   },
   SCU: {
-    actions: [
-      { id: 'fund', route: '/fund-account' },
-      { id: 'scheduleMeeting' },
-      { id: 'requestDebit', route: '/request-debit-card' },
-      { id: 'openAccount' },
-    ],
+    actions: {
+      fund: { isChecked: false, route: '/fund-account' },
+      scheduleMeeting: { isChecked: false },
+      requestDebit: { isChecked: false, route: '/request-debit-card' },
+      openAccount: { isChecked: false },
+    },
     fundLimits: { min: 26.74, max: 999999999 },
   },
   FFFCU: {
-    actions: [
-      { id: 'fund', route: '/fund-account' },
-      { id: 'addBeneficiary' },
-      { id: 'accessDigitalBanking' },
-      { id: 'requestDebit', route: '/request-debit-card' },
-      { id: 'openShare' },
-    ],
+    actions: {
+      fund: { isChecked: false, route: '/fund-account' },
+      addBeneficiary: { isChecked: false },
+      accessDigitalBanking: { isChecked: false },
+      requestDebit: { isChecked: false, route: '/request-debit-card' },
+      openShare: { isChecked: false },
+    },
     fundLimits: { min: 0, max: 50000 },
   },
 };
