@@ -5,7 +5,7 @@ import { bankConfig } from '@/data/bankConfig';
 import { toast } from 'react-toastify';
 
 const FundAccount = () => {
-  const { bank } = useBankContext();
+  const { bank, setBankData } = useBankContext();
   const router = useRouter();
   const [amount, setAmount] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -33,14 +33,18 @@ const FundAccount = () => {
       }
 
       const data = await response.json();
-      console.log(data);
+
+      setBankData((prevData) => ({
+        ...prevData,
+        fund: {
+          ...prevData.fund,
+          isChecked: true,
+        },
+      }));
 
       toast.success(`Your deposit of $${amount} succeeded!`);
 
-      router.push({
-        pathname: '/',
-        query: { checkedItem: 'fund' },
-      });
+      router.push('/');
     } catch (err) {
       setError((err as Error).message || 'An unknown error occurred.');
     }

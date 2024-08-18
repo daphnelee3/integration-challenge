@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import FormInput from '@/components/FormInput';
 import { toast } from 'react-toastify';
+import { useBankContext } from '@/context/BankContext';
 
 type FormData = {
   street1: string;
@@ -12,6 +13,8 @@ type FormData = {
 };
 
 const RequestDebitCard = () => {
+  const { setBankData } = useBankContext();
+
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     street1: '',
@@ -55,14 +58,18 @@ const RequestDebitCard = () => {
       if (!response.ok) {
         throw new Error('Failed to request debit card');
       }
-      console.log(response);
+
+      setBankData((prevData) => ({
+        ...prevData,
+        requestDebit: {
+          ...prevData.fund,
+          isChecked: true,
+        },
+      }));
 
       toast.success(`Your debit card has been requested!`);
 
-      router.push({
-        pathname: '/',
-        query: { checkedItem: 'requestDebit' },
-      });
+      router.push('/');
     } catch (err) {
       setError((err as Error).message || 'An unknown error occurred.');
     }
