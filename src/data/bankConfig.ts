@@ -1,11 +1,12 @@
 import { BankName } from './types';
 
 type Action = {
+  title: string;
   isChecked: boolean;
   route?: string;
 };
 
-type BankActions = {
+export type BankActions = {
   [key: string]: Action; // key is the action id
 };
 
@@ -22,30 +23,66 @@ export type BankConfig = {
 export const bankConfig: Record<BankName, BankConfig> = {
   USCCU: {
     actions: {
-      fund: { isChecked: false, route: '/fund-account' },
-      requestDebit: { isChecked: false, route: '/request-debit-card' },
-      accessDigitalBanking: { isChecked: false },
-      addNewChecking: { isChecked: false },
-      connectDirectDeposit: { isChecked: false },
+      fund: {
+        title: 'Make a deposit into your account',
+        isChecked: false,
+        route: '/fund-account',
+      },
+      requestDebit: {
+        title: 'Request a debit card',
+        isChecked: false,
+        route: '/request-debit-card',
+      },
+      accessDigitalBanking: {
+        title: 'Access online banking',
+        isChecked: false,
+      },
+      addNewChecking: { title: 'Add a checking account', isChecked: false },
+      connectDirectDeposit: {
+        title: 'Add/Switch Direct Deposit',
+        isChecked: false,
+      },
     },
     fundLimits: { min: 10, max: 100000 },
   },
   SCU: {
     actions: {
-      fund: { isChecked: false, route: '/fund-account' },
-      scheduleMeeting: { isChecked: false },
-      requestDebit: { isChecked: false, route: '/request-debit-card' },
-      openAccount: { isChecked: false },
+      fund: {
+        title: 'Make a deposit into your account',
+        isChecked: false,
+        route: '/fund-account',
+      },
+      scheduleMeeting: {
+        title: 'Schedule a meeting with your wealth manager',
+        isChecked: false,
+      },
+      requestDebit: {
+        title: 'Request a debit card',
+        isChecked: false,
+        route: '/request-debit-card',
+      },
+      openAccount: { title: 'Add an account', isChecked: false },
     },
     fundLimits: { min: 26.74, max: 999999999 },
   },
   FFFCU: {
     actions: {
-      fund: { isChecked: false, route: '/fund-account' },
-      addBeneficiary: { isChecked: false },
-      accessDigitalBanking: { isChecked: false },
-      requestDebit: { isChecked: false, route: '/request-debit-card' },
-      openShare: { isChecked: false },
+      fund: {
+        title: 'Make a deposit into your account',
+        isChecked: false,
+        route: '/fund-account',
+      },
+      addBeneficiary: { title: 'Add a beneficiary', isChecked: false },
+      accessDigitalBanking: {
+        title: 'Access online banking',
+        isChecked: false,
+      },
+      requestDebit: {
+        title: 'Request a debit card',
+        isChecked: false,
+        route: '/request-debit-card',
+      },
+      openShare: { title: 'Open a certificate of deposit', isChecked: false },
     },
     fundLimits: { min: 0, max: 50000 },
   },
