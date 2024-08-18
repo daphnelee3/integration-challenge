@@ -3,49 +3,25 @@ import styles from '@/styles/Checklist.module.css';
 import { useRouter } from 'next/router';
 import { useBankContext } from '../context/BankContext';
 import ProgressBar from 'react-progressbar';
-import { getOnboardingList } from '@/data/onboarding';
-import OnboardingItem, { OnboardingItemProps } from './OnboardingItem';
-import { bankConfig } from '@/data/bankConfig';
+import OnboardingItem from './OnboardingItem';
 
 export default function Checklist() {
-  const { bank } = useBankContext();
+  const { bank, bankData } = useBankContext();
   const router = useRouter();
-  const [items, setItems] = useState<OnboardingItemProps[]>(
-    getOnboardingList()
-  );
 
-  useEffect(() => {
-    if (router.query.checkedItem) {
-      const itemId = router.query.checkedItem as string;
-      setItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === itemId ? { ...item, checked: true } : item
-        )
-      );
-    }
-  }, [router.query.checkedItem]);
-
-  const handleCheck = (id: string) => {
-    const action = bankConfig[bank]?.actions.find((action) => action.id === id);
-
-    if (action?.route) {
-      router.push(action.route);
-    } else {
-      setItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === id ? { ...item, checked: !item.checked } : item
-        )
-      );
+  const handleItemClick = (id: string) => {
+    if (bankData[id].route) {
+      router.push(bankData[id].route);
     }
   };
 
-  const filteredItems = items.filter((item) =>
-    bankConfig[bank]?.actions.some((action) => action.id === item.id)
-  );
+  const checklistItems = Object.entries(bankData);
 
   // progress bar calculation
-  const totalItems = filteredItems.length;
-  const checkedItems = filteredItems.filter((item) => item.checked).length;
+  const totalItems = checklistItems.length;
+  const checkedItems = checklistItems.filter(
+    ([_, item]) => item.isChecked
+  ).length;
   const progress = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
 
   return (
@@ -62,16 +38,20 @@ export default function Checklist() {
         </div>
       </div>
       <div className="space-y-4">
-        {filteredItems.map(({ id, title, checked, focused, onClick }) => (
-          <OnboardingItem
-            key={id}
-            id={id}
-            checked={checked}
-            focused={focused}
-            title={title}
-            onClick={() => handleCheck(id)}
-          />
-        ))}
+        {checklistItems.map(
+          ([id, { title, isChecked }]) => (
+            console.log(id, title, isChecked),
+            (
+              <OnboardingItem
+                key={id}
+                id={id}
+                checked={isChecked}
+                title={title}
+                onClick={() => handleItemClick(id)}
+              />
+            )
+          )
+        )}
       </div>
     </div>
   );
