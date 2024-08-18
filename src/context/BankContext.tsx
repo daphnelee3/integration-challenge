@@ -1,26 +1,39 @@
-import { BankConfig, bankConfig } from '@/data/bankConfig';
+import { BankActions, bankConfig, BankConfig } from '@/data/bankConfig';
 import { BankName } from '@/data/types';
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react';
 
 interface BankContextType {
   bank: BankName;
   setBank: React.Dispatch<React.SetStateAction<BankName>>;
-  bankData: BankConfig;
+  bankData: BankActions;
+  setBankData: React.Dispatch<React.SetStateAction<BankActions>>;
 }
 
 const BankContext = createContext<BankContextType>({
   bank: BankName.USCCU,
   setBank: () => {},
-  bankData: bankConfig[BankName.USCCU],
+  bankData: bankConfig[BankName.USCCU].actions,
+  setBankData: () => {},
 });
 
 export const BankContextProvider = ({ children }: { children: ReactNode }) => {
   const [bank, setBank] = useState<BankName>(BankName.USCCU);
+  const [bankData, setBankData] = useState<BankActions>(
+    bankConfig[bank].actions
+  );
 
-  const bankData = bankConfig[bank];
+  useEffect(() => {
+    setBankData(bankConfig[bank].actions);
+  }, [bank]);
 
   return (
-    <BankContext.Provider value={{ bank, setBank, bankData }}>
+    <BankContext.Provider value={{ bank, setBank, bankData, setBankData }}>
       {children}
     </BankContext.Provider>
   );
